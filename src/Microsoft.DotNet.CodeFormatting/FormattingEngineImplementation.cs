@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Formatting;
+using Microsoft.CodeAnalysis.CSharp.Formatting;
 
 namespace Microsoft.DotNet.CodeFormatting
 {
@@ -23,7 +25,7 @@ namespace Microsoft.DotNet.CodeFormatting
     {
         /// <summary>
         /// Developers who want to opt out of the code formatter for items like unicode
-        /// tables can surround them with #if !DOTNET_FORMATTER.  
+        /// tables can surround them with #if !DOTNET_FORMATTER.
         /// </summary>
         internal const string TablePreprocessorSymbolName = "DOTNET_FORMATTER";
 
@@ -133,9 +135,18 @@ namespace Microsoft.DotNet.CodeFormatting
 
         private async Task FormatAsync(Workspace workspace, IReadOnlyList<DocumentId> documentIds, CancellationToken cancellationToken)
         {
+            workspace.Options = workspace.Options.WithChangedOption( FormattingOptions.UseTabs, LanguageNames.CSharp, true );
+            workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceWithinMethodCallParentheses, true );
+            workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceWithinMethodDeclarationParenthesis, true );
+            workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceWithinOtherParentheses, true );
+            workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceWithinExpressionParentheses, true );
+            workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceWithinSquareBrackets, true );
+            //workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceBetweenEmptySquareBrackets, false );
+            //workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpacingAroundBinaryOperator, BinaryOperatorSpacingOptions.Single );
+            //workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceAfterControlFlowStatementKeyword, true );
+            //workspace.Options = workspace.Options.WithChangedOption( CSharpFormattingOptions.SpaceAfterCast, false );
             var watch = new Stopwatch();
             watch.Start();
-
             var originalSolution = workspace.CurrentSolution;
             var solution = await FormatCoreAsync(originalSolution, documentIds, cancellationToken);
 
@@ -171,7 +182,7 @@ namespace Microsoft.DotNet.CodeFormatting
 
         /// <summary>
         /// Remove the added table preprocessor symbol.  Don't want that saved into the project
-        /// file as a change. 
+        /// file as a change.
         /// </summary>
         private Solution RemoveTablePreprocessorSymbol(Solution newSolution, Solution oldSolution)
         {
@@ -254,10 +265,10 @@ namespace Microsoft.DotNet.CodeFormatting
         }
 
         /// <summary>
-        /// Semantics is not involved in this pass at all.  It is just a straight modification of the 
+        /// Semantics is not involved in this pass at all.  It is just a straight modification of the
         /// parse tree so there are no issues about ensuring the version of <see cref="SemanticModel"/> and
-        /// the <see cref="SyntaxNode"/> line up.  Hence we do this by iteraning every <see cref="Document"/> 
-        /// and processing all rules against them at once 
+        /// the <see cref="SyntaxNode"/> line up.  Hence we do this by iteraning every <see cref="Document"/>
+        /// and processing all rules against them at once
         /// </summary>
         private async Task<Solution> RunSyntaxPass(Solution originalSolution, IReadOnlyList<DocumentId> documentIds, CancellationToken cancellationToken)
         {

@@ -17,9 +17,9 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace Microsoft.DotNet.CodeFormatting.Rules
 {
     /// <summary>
-    /// Ensure there is a blank line above the first using and namespace in the file. 
+    /// Ensure there is a blank line above the first using and namespace in the file.
     /// </summary>
-    [SyntaxRule(NewLineAboveRule.Name, NewLineAboveRule.Description, SyntaxRuleOrder.NewLineAboveFormattingRule)]
+    //[SyntaxRule(NewLineAboveRule.Name, NewLineAboveRule.Description, SyntaxRuleOrder.NewLineAboveFormattingRule)]
     internal sealed class NewLineAboveRule : CSharpOnlyFormattingRule, ISyntaxFormattingRule
     {
         internal const string Name = "NewLineAbove";
@@ -63,7 +63,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
                 // The namespace node is typically preceeded by a using node.  In thate case the trivia will
                 // be split between the two nodes.  If the namespace already has a newline leading trivia then
                 // there is at least a single blank between the nodes as the using will have a trailing new
-                // line as well (in case of a single on it will be on the using).  
+                // line as well (in case of a single on it will be on the using).
                 return syntaxRoot;
             }
             else

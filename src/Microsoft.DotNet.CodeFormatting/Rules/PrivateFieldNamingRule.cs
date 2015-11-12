@@ -28,7 +28,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
             protected abstract SyntaxNode AddPrivateFieldAnnotations(SyntaxNode syntaxNode, out int count);
 
             /// <summary>
-            /// This method exists to work around DevDiv 1086632 in Roslyn.  The Rename action is 
+            /// This method exists to work around DevDiv 1086632 in Roslyn.  The Rename action is
             /// leaving a set of annotations in the tree.  These annotations slow down further processing
             /// and eventually make the rename operation unusable.  As a temporary work around we manually
             /// remove these from the tree.
@@ -96,18 +96,18 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
                     name = char.ToLower(name[0]) + name.Substring(1);
                 }
 
-                if (fieldSymbol.IsStatic)
-                {
-                    // Check for ThreadStatic private fields.
-                    if (fieldSymbol.GetAttributes().Any(a => a.AttributeClass.Name.Equals("ThreadStaticAttribute", StringComparison.Ordinal)))
-                    {
-                        return "t_" + name;
-                    }
-                    else
-                    {
-                        return "s_" + name;
-                    }
-                }
+                //if (fieldSymbol.IsStatic)
+                //{
+                //    // Check for ThreadStatic private fields.
+                //    if (fieldSymbol.GetAttributes().Any(a => a.AttributeClass.Name.Equals("ThreadStaticAttribute", StringComparison.Ordinal)))
+                //    {
+                //        return "t_" + name;
+                //    }
+                //    else
+                //    {
+                //        return "s_" + name;
+                //    }
+                //}
 
                 return "_" + name;
             }
