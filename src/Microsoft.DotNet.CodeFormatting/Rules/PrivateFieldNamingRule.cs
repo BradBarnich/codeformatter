@@ -62,7 +62,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
                     var semanticModel = await solution.GetDocument(documentId).GetSemanticModelAsync(cancellationToken);
                     var root = await semanticModel.SyntaxTree.GetRootAsync(cancellationToken);
                     var declaration = root.GetAnnotatedNodes(s_markerAnnotation).ElementAt(i);
-                    var fieldSymbol = (IFieldSymbol)semanticModel.GetDeclaredSymbol(declaration, cancellationToken);
+                    var fieldSymbol = (IFieldSymbol) semanticModel.GetDeclaredSymbol(declaration, cancellationToken);
                     var newName = GetNewFieldName(fieldSymbol);
 
                     // Can happen with pathologically bad field names like _
@@ -71,7 +71,8 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
                         continue;
                     }
 
-                    solution = await Renamer.RenameSymbolAsync(solution, fieldSymbol, newName, solution.Workspace.Options, cancellationToken).ConfigureAwait(false);
+                    solution =
+                        await Renamer.RenameSymbolAsync(solution, fieldSymbol, newName, solution.Workspace.Options, cancellationToken).ConfigureAwait(false);
                     solution = await CleanSolutionAsync(solution, oldSolution, cancellationToken);
                 }
 
@@ -152,7 +153,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
 
         static PrivateFieldNamingRule()
         {
-            s_markerAnnotationArray = new[] { s_markerAnnotation };
+            s_markerAnnotationArray = new[] {s_markerAnnotation};
         }
 
         private readonly CSharpRule _csharpRule = new CSharpRule();
@@ -184,10 +185,7 @@ namespace Microsoft.DotNet.CodeFormatting.Rules
             {
                 return name.Length > 0 && name[0] == '_';
             }
-            else
-            {
-                return name.Length > 1 && (name[0] == 's' || name[0] == 't') && name[1] == '_';
-            }
+            return name.Length > 1 && (name[0] == Char.ToUpper(name[0]));
         }
     }
 }
