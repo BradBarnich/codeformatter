@@ -1,3 +1,12 @@
+# To build for CareEvolution
+```
+cd src
+nuget restore
+cd CodeFormatter
+MSBuild.exe .\CodeFormatter.csproj /p:Configuration=Release
+nuget pack CareEvolution.CodeFormatter.nuspec
+```
+
 # CodeFormatter
 
 [![Build status](http://dotnet-ci.cloudapp.net/job/dotnet_codeformatter/job/innerloop/badge/icon)](http://dotnet-ci.cloudapp.net/job/dotnet_codeformatter/job/innerloop/)

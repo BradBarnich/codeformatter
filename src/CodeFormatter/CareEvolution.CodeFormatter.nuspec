@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <id>CareEvolution.CodeFormatter</id>
+        <version>2.0.0</version>
+        <authors>CareEvolution,Inc</authors>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <developmentDependency>true</developmentDependency>
+        <description>CareEvolution fork of https://github.com/dotnet/codeformatter</description>
+    </metadata>
+	<files>
+		<file src="..\..\bin\CodeFormatter\Release\*" target="tools" />
+	</files>
+</package>
