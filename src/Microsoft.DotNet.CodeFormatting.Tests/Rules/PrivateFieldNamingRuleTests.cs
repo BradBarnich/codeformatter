@@ -13,7 +13,7 @@ namespace Microsoft.DotNet.CodeFormatting.Tests
             get { return new Rules.PrivateFieldNamingRule(); }
         }
 
-        private sealed class CSharpFields : PrivateFieldNamingRuleTests
+        public sealed class CSharpFields : PrivateFieldNamingRuleTests
         {
             [Fact]
             public void TestUnderScoreInPrivateFields()
@@ -214,7 +214,7 @@ class C
             }
         }
 
-        private sealed class VisualBasicFields : PrivateFieldNamingRuleTests
+        public sealed class VisualBasicFields : PrivateFieldNamingRuleTests
         {
             [Fact]
             public void Simple()

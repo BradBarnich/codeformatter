@@ -554,6 +554,7 @@ internal class C
                 Verify(text, expected);
             }
 
+            [Fact]
             public void CommentAttributeAndMultipleField()
             {
                 var text = @"

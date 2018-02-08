@@ -198,7 +198,7 @@ namespace CodeFormatter
                 {
                     language = arg.Substring(LanguageSwitch.Length);
                 }
-                else if (comparer.Equals(arg, "/nocopyright"))
+                else if (true || comparer.Equals(arg, "/nocopyright"))
                 {
                     ruleMap = ruleMap.SetItem(FormattingDefaults.CopyrightRuleName, false);
                 }
