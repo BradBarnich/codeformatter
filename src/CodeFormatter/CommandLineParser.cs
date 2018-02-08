@@ -168,7 +168,7 @@ namespace CodeFormatter
             var language = LanguageNames.CSharp;
             var allowTables = false;
             var verbose = false;
-
+            ruleMap = ruleMap.SetItem(FormattingDefaults.CopyrightRuleName, false);
             for (int i = 0; i < args.Length; i++)
             {
                 string arg = args[i];
@@ -198,7 +198,7 @@ namespace CodeFormatter
                 {
                     language = arg.Substring(LanguageSwitch.Length);
                 }
-                else if (true || comparer.Equals(arg, "/nocopyright"))
+                else if (comparer.Equals(arg, "/nocopyright"))
                 {
                     ruleMap = ruleMap.SetItem(FormattingDefaults.CopyrightRuleName, false);
                 }
