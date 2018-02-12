@@ -1,75 +1,10 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\build.props" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectGuid>{D535641F-A2D7-481C-930D-96C02F052B95}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Microsoft.DotNet.CodeFormatting</RootNamespace>
-    <AssemblyName>Microsoft.DotNet.CodeFormatting</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
-  <!-- Default configurations to help VS understand -->
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' " />
   <ItemGroup>
-    <Compile Include="NameHelper.cs" />
-    <Compile Include="ResponseFileWorkspace.cs" />
-    <Compile Include="Rules\MarkReadonlyFieldsRule.cs" />
-    <Compile Include="SemaphoreLock.cs" />
-    <Compile Include="SyntaxUtil.cs" />
-    <Compile Include="Filters\FilenameFilter.cs" />
-    <Compile Include="Filters\UsableFileFilter.cs" />
-    <Compile Include="FormattingDefaults.cs" />
-    <Compile Include="FormattingEngine.cs" />
-    <Compile Include="FormattingEngineImplementation.cs" />
-    <Compile Include="IFormatLogger.cs" />
-    <Compile Include="IFormattingEngine.cs" />
-    <Compile Include="IFormattingFilter.cs" />
-    <Compile Include="IFormattingRule.cs" />
-    <Compile Include="Filters\IgnoreGeneratedFilesFilter.cs" />
-    <Compile Include="Options.cs" />
-    <Compile Include="RuleAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IRuleMetadata.cs" />
-    <Compile Include="Rules\ExplicitVisibilityRule.CSharp.cs" />
-    <Compile Include="Rules\ExplicitVisibilityRule.VisualBasic.cs" />
-    <Compile Include="Rules\PrivateFieldNamingRule.CSharp.cs" />
-    <Compile Include="Rules\PrivateFieldNamingRule.VisualBasic.cs" />
-    <Compile Include="Rules\SyntaxFormattingRule.cs" />
-    <Compile Include="Rules\BraceNewLineRule.cs" />
-    <Compile Include="Rules\CopyrightHeaderRule.VisualBasic.cs" />
-    <Compile Include="Rules\CopyrightHeaderRule.CSharp.cs" />
-    <Compile Include="Rules\CSharpOnlyFormattingRule.cs" />
-    <Compile Include="Rules\ExplicitVisibilityRule.cs" />
-    <Compile Include="Rules\CopyrightHeaderRule.cs" />
-    <Compile Include="Rules\NewLineAboveRule.cs" />
-    <Compile Include="Rules\HasNoIllegalHeadersFormattingRule.cs" />
-    <Compile Include="Rules\HasNoCustomCopyrightHeaderFormattingRule.cs" />
-    <Compile Include="Rules\PrivateFieldNamingRule.cs" />
-    <Compile Include="Rules\UsingLocationRule.cs" />
-    <Compile Include="Rules\FormatDocumentFormattingRule.cs" />
-    <Compile Include="Rules\NonAsciiCharactersAreEscapedInLiteralsRule.cs" />
-    <Compile Include="Rules\ExplicitThisRule.cs" />
-    <Compile Include="Rules\RuleOrder.cs" />
+    <PackageReference Include="Buildalyzer.Workspaces" Version="0.2.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Features" Version="2.4.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.VisualBasic.Features" Version="2.4.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build">
-      <Version>15.5.180</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Build.Framework">
-      <Version>15.5.180</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Build.Tasks.Core">
-      <Version>15.5.180</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.CodeAnalysis">
-      <Version>2.6.1</Version>
-    </PackageReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -8,6 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Buildalyzer;
+using Buildalyzer.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
 using Microsoft.DotNet.CodeFormatting;
@@ -18,6 +20,18 @@ namespace CodeFormatter
     {
         private static int Main(string[] args)
         {
+            //Environment.SetEnvironmentVariable("VisualStudioVersion", "15.0");
+
+            //Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH",
+            //    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe");
+
+            //Environment.SetEnvironmentVariable("VSINSTALLDIR",
+            //    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise");
+
+            //Environment.SetEnvironmentVariable("MSBuildSDKsPath", "C:\\Program Files\\dotnet\\sdk\\2.1.4\\Sdks");
+
+            //Environment.SetEnvironmentVariable("MSBuildExtensionsPath32", @"C:\Users\Brad\Code\codeformatter\src\CodeFormatter\bin\Debug\net461");
+
             var result = CommandLineParser.Parse(args);
             if (result.IsError)
             {
@@ -119,11 +133,15 @@ namespace CodeFormatter
             }
             else if (StringComparer.OrdinalIgnoreCase.Equals(extension, ".sln"))
             {
-                using (var workspace = MSBuildWorkspace.Create())
+                AnalyzerManager manager = new AnalyzerManager(item);
+                
+
+                using (var workspace = manager.GetWorkspace())
                 {
-                    workspace.LoadMetadataForReferencedProjects = true;
-                    var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
-                    await engine.FormatSolutionAsync(solution, cancellationToken);
+                    
+                    //workspace.LoadMetadataForReferencedProjects = true;
+                    //var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
+                    await engine.FormatSolutionAsync(workspace.CurrentSolution, cancellationToken);
                 }
             }
             else
