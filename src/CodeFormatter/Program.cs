@@ -8,11 +8,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Buildalyzer;
-using Buildalyzer.Workspaces;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Build.MSBuildLocator;
 using Microsoft.DotNet.CodeFormatting;
+using System.Diagnostics;
 
 namespace CodeFormatter
 {
@@ -20,17 +20,27 @@ namespace CodeFormatter
     {
         private static int Main(string[] args)
         {
-            //Environment.SetEnvironmentVariable("VisualStudioVersion", "15.0");
+            Environment.SetEnvironmentVariable("VisualStudioVersion", "15.0");
 
-            //Environment.SetEnvironmentVariable("MSBUILD_EXE_PATH",
-            //    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\MSBuild\15.0\Bin\msbuild.exe");
-
-            //Environment.SetEnvironmentVariable("VSINSTALLDIR",
-            //    @"C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise");
-
-            //Environment.SetEnvironmentVariable("MSBuildSDKsPath", "C:\\Program Files\\dotnet\\sdk\\2.1.4\\Sdks");
-
-            //Environment.SetEnvironmentVariable("MSBuildExtensionsPath32", @"C:\Users\Brad\Code\codeformatter\src\CodeFormatter\bin\Debug\net461");
+            var vsInstallDir = Environment.GetEnvironmentVariable("VSINSTALLDIR");
+            if (string.IsNullOrEmpty(vsInstallDir) || !Directory.Exists(vsInstallDir))
+            {
+                var instance = MSBuildLocator.QueryVisualStudioInstances()
+                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 5)
+                    .FirstOrDefault();
+                if (instance != null)
+                {
+                    MSBuildLocator.RegisterInstance(instance);
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        "Visual Studio 15.5 installation directory was not found. " +
+                        "Install Visual Studio 15.5 or set the environment variable VSINSTALLDIR" +
+                        "15.6 appears not to be compatible, try updating nugets after it is released");
+                }
+                Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.VisualStudioRootPath);
+            }
 
             var result = CommandLineParser.Parse(args);
             if (result.IsError)
@@ -120,7 +130,7 @@ namespace CodeFormatter
         }
 
         private static async Task RunFormatItemAsync(IFormattingEngine engine, string item, string language, CancellationToken cancellationToken)
-        { 
+        {
             Console.WriteLine(Path.GetFileName(item));
             string extension = Path.GetExtension(item);
             if (StringComparer.OrdinalIgnoreCase.Equals(extension, ".rsp"))
@@ -133,14 +143,11 @@ namespace CodeFormatter
             }
             else if (StringComparer.OrdinalIgnoreCase.Equals(extension, ".sln"))
             {
-                AnalyzerManager manager = new AnalyzerManager(item);
-                
-
-                using (var workspace = manager.GetWorkspace())
+                using (var workspace = MSBuildWorkspace.Create())
                 {
-                    
-                    //workspace.LoadMetadataForReferencedProjects = true;
-                    //var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
+                    workspace.LoadMetadataForReferencedProjects = true;
+                    var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
+                    ThrowIfDiagnostics(workspace);
                     await engine.FormatSolutionAsync(workspace.CurrentSolution, cancellationToken);
                 }
             }
@@ -150,9 +157,19 @@ namespace CodeFormatter
                 {
                     workspace.LoadMetadataForReferencedProjects = true;
                     var project = await workspace.OpenProjectAsync(item, cancellationToken);
+                    ThrowIfDiagnostics(workspace);
                     await engine.FormatProjectAsync(project, cancellationToken);
                 }
             }
+        }
+
+        private static void ThrowIfDiagnostics(MSBuildWorkspace workspace)
+        {
+            foreach (var diagnostic in workspace.Diagnostics)
+            {
+                Console.WriteLine($"{diagnostic.Kind} {diagnostic.Message}");
+            }
+            if (workspace.Diagnostics.Count > 0) Environment.Exit(1);
         }
 
         private static bool SetRuleMap(IFormattingEngine engine, ImmutableDictionary<string, bool> ruleMap)

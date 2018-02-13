@@ -2,13 +2,13 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>CareEvolution.CodeFormatter</id>
-        <version>2.6.1</version>
+        <version>2.6.2</version>
         <authors>CareEvolution,Inc</authors>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <developmentDependency>true</developmentDependency>
         <description>CareEvolution fork of https://github.com/dotnet/codeformatter</description>
     </metadata>
 	<files>
-		<file src="..\..\bin\CodeFormatter\Release\*" target="tools" />
+		<file src="bin\Release\net461\*" target="tools" />
 	</files>
 </package>

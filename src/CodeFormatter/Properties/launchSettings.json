@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CodeFormatter": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\Brad\\Code\\HIEBus\\HIEBus.sln"
+    }
+  }
+}

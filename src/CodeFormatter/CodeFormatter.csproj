@@ -12,6 +12,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.Build.MSBuildLocator" Version="1.0.1-preview-g6cd9a57801" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.CodeFormatting\Microsoft.DotNet.CodeFormatting.csproj" />
   </ItemGroup>
 </Project>
