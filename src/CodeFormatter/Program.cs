@@ -26,7 +26,7 @@ namespace CodeFormatter
             if (string.IsNullOrEmpty(vsInstallDir) || !Directory.Exists(vsInstallDir))
             {
                 var instance = MSBuildLocator.QueryVisualStudioInstances()
-                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 5)
+                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 6)
                     .FirstOrDefault();
                 if (instance != null)
                 {
@@ -35,9 +35,9 @@ namespace CodeFormatter
                 else
                 {
                     throw new InvalidOperationException(
-                        "Visual Studio 15.5 installation directory was not found. " +
-                        "Install Visual Studio 15.5 or set the environment variable VSINSTALLDIR" +
-                        "15.6 appears not to be compatible, try updating nugets after it is released");
+                        "Visual Studio 2017 Update 6 installation directory was not found. " +
+                        "Install Visual Studio 2017 Update 6 or set the environment variable VSINSTALLDIR. " +
+                        "Updating nugets after a new update is released");
                 }
                 Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.VisualStudioRootPath);
             }

@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
     <OutputType>Exe</OutputType>
+    <NuspecFile>CareEvolution.CodeFormatter.nuspec</NuspecFile>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="CopyrightHeader.md">
