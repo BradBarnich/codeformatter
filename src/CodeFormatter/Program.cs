@@ -26,7 +26,7 @@ namespace CodeFormatter
             if (string.IsNullOrEmpty(vsInstallDir) || !Directory.Exists(vsInstallDir))
             {
                 var instance = MSBuildLocator.QueryVisualStudioInstances()
-                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 6)
+                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 7)
                     .FirstOrDefault();
                 if (instance != null)
                 {
