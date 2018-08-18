@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFrameworks>netcoreapp2.1;net461</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <NuspecFile>CareEvolution.CodeFormatter.nuspec</NuspecFile>
   </PropertyGroup>
@@ -13,7 +13,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.MSBuildLocator" Version="1.0.1-preview-g6cd9a57801" />
+    <PackageReference Include="Buildalyzer" Version="1.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.CodeFormatting\Microsoft.DotNet.CodeFormatting.csproj" />
