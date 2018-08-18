@@ -9,10 +9,10 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.MSBuild;
+using Microsoft.Build.MSBuildLocator;
 using Microsoft.DotNet.CodeFormatting;
 using System.Diagnostics;
-using Buildalyzer;
-using Buildalyzer.Workspaces;
 
 namespace CodeFormatter
 {
@@ -20,6 +20,28 @@ namespace CodeFormatter
     {
         private static int Main(string[] args)
         {
+            Environment.SetEnvironmentVariable("VisualStudioVersion", "15.0");
+
+            var vsInstallDir = Environment.GetEnvironmentVariable("VSINSTALLDIR");
+            if (string.IsNullOrEmpty(vsInstallDir) || !Directory.Exists(vsInstallDir))
+            {
+                var instance = MSBuildLocator.QueryVisualStudioInstances()
+                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 7)
+                    .FirstOrDefault();
+                if (instance != null)
+                {
+                    MSBuildLocator.RegisterInstance(instance);
+                }
+                else
+                {
+                    throw new InvalidOperationException(
+                        "Visual Studio 2017 Update 6 installation directory was not found. " +
+                        "Install Visual Studio 2017 Update 6 or set the environment variable VSINSTALLDIR. " +
+                        "Updating nugets after a new update is released");
+                }
+                Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.VisualStudioRootPath);
+            }
+
             var result = CommandLineParser.Parse(args);
             if (result.IsError)
             {
@@ -110,23 +132,45 @@ namespace CodeFormatter
         private static async Task RunFormatItemAsync(IFormattingEngine engine, string item, string language, CancellationToken cancellationToken)
         {
             Console.WriteLine(Path.GetFileName(item));
-            var manager = new AnalyzerManager(item);
             string extension = Path.GetExtension(item);
-            using (var workspace = manager.GetWorkspace())
+            if (StringComparer.OrdinalIgnoreCase.Equals(extension, ".rsp"))
             {
-                await engine.FormatSolutionAsync(workspace.CurrentSolution, cancellationToken);
-
+                using (var workspace = ResponseFileWorkspace.Create())
+                {
+                    Project project = workspace.OpenCommandLineProject(item, language);
+                    await engine.FormatProjectAsync(project, cancellationToken);
+                }
+            }
+            else if (StringComparer.OrdinalIgnoreCase.Equals(extension, ".sln"))
+            {
+                using (var workspace = MSBuildWorkspace.Create())
+                {
+                    workspace.LoadMetadataForReferencedProjects = true;
+                    var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
+                    ThrowIfDiagnostics(workspace);
+                    await engine.FormatSolutionAsync(workspace.CurrentSolution, cancellationToken);
+                }
+            }
+            else
+            {
+                using (var workspace = MSBuildWorkspace.Create())
+                {
+                    workspace.LoadMetadataForReferencedProjects = true;
+                    var project = await workspace.OpenProjectAsync(item, cancellationToken);
+                    ThrowIfDiagnostics(workspace);
+                    await engine.FormatProjectAsync(project, cancellationToken);
+                }
             }
         }
 
-        // private static void ThrowIfDiagnostics(AdhocWorkspace workspace)
-        // {
-        //     foreach (var diagnostic in workspace.)
-        //     {
-        //         Console.WriteLine($"{diagnostic.Kind} {diagnostic.Message}");
-        //     }
-        //     if (workspace.Diagnostics.Count > 0) Environment.Exit(1);
-        // }
+        private static void ThrowIfDiagnostics(MSBuildWorkspace workspace)
+        {
+            foreach (var diagnostic in workspace.Diagnostics)
+            {
+                Console.WriteLine($"{diagnostic.Kind} {diagnostic.Message}");
+            }
+            if (workspace.Diagnostics.Count > 0) Environment.Exit(1);
+        }
 
         private static bool SetRuleMap(IFormattingEngine engine, ImmutableDictionary<string, bool> ruleMap)
         {
