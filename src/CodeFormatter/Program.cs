@@ -10,9 +10,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.MSBuild;
-using Microsoft.Build.MSBuildLocator;
 using Microsoft.DotNet.CodeFormatting;
 using System.Diagnostics;
+using Microsoft.Build.Locator;
 
 namespace CodeFormatter
 {
@@ -26,7 +26,7 @@ namespace CodeFormatter
             if (string.IsNullOrEmpty(vsInstallDir) || !Directory.Exists(vsInstallDir))
             {
                 var instance = MSBuildLocator.QueryVisualStudioInstances()
-                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 7)
+                    .Where(i => i.Version.Major == 15 && i.Version.Minor == 8)
                     .FirstOrDefault();
                 if (instance != null)
                 {
@@ -35,8 +35,8 @@ namespace CodeFormatter
                 else
                 {
                     throw new InvalidOperationException(
-                        "Visual Studio 2017 Update 6 installation directory was not found. " +
-                        "Install Visual Studio 2017 Update 6 or set the environment variable VSINSTALLDIR. " +
+                        "Visual Studio 2017 Update 8 (15.8) installation directory was not found. " +
+                        "Install Visual Studio 2017 Update 8 (15.8) or set the environment variable VSINSTALLDIR. " +
                         "Updating nugets after a new update is released");
                 }
                 Environment.SetEnvironmentVariable("VSINSTALLDIR", instance.VisualStudioRootPath);
@@ -146,7 +146,7 @@ namespace CodeFormatter
                 using (var workspace = MSBuildWorkspace.Create())
                 {
                     workspace.LoadMetadataForReferencedProjects = true;
-                    var solution = await workspace.OpenSolutionAsync(item, cancellationToken);
+                    var solution = await workspace.OpenSolutionAsync(item, cancellationToken: cancellationToken);
                     ThrowIfDiagnostics(workspace);
                     await engine.FormatSolutionAsync(workspace.CurrentSolution, cancellationToken);
                 }
@@ -156,7 +156,7 @@ namespace CodeFormatter
                 using (var workspace = MSBuildWorkspace.Create())
                 {
                     workspace.LoadMetadataForReferencedProjects = true;
-                    var project = await workspace.OpenProjectAsync(item, cancellationToken);
+                    var project = await workspace.OpenProjectAsync(item, cancellationToken: cancellationToken);
                     ThrowIfDiagnostics(workspace);
                     await engine.FormatProjectAsync(project, cancellationToken);
                 }
@@ -169,7 +169,7 @@ namespace CodeFormatter
             {
                 Console.WriteLine($"{diagnostic.Kind} {diagnostic.Message}");
             }
-            if (workspace.Diagnostics.Count > 0) Environment.Exit(1);
+            //if (workspace.Diagnostics.Count > 0) Environment.Exit(1);
         }
 
         private static bool SetRuleMap(IFormattingEngine engine, ImmutableDictionary<string, bool> ruleMap)

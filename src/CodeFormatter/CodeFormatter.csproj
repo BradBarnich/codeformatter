@@ -4,6 +4,9 @@
     <OutputType>Exe</OutputType>
     <NuspecFile>CareEvolution.CodeFormatter.nuspec</NuspecFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <Content Include="CopyrightHeader.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -13,7 +16,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.MSBuildLocator" Version="1.0.1-preview-g6cd9a57801" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.18" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.DotNet.CodeFormatting\Microsoft.DotNet.CodeFormatting.csproj" />
